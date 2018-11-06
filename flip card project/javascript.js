@@ -3,10 +3,12 @@ let player = {
 	"profilePicture": "url('images/player.png')",
 	"name": "Player1",
 	"balance": 100000,
-	"count": 0
+	"count": 0,
+	"turn": true
 }
 let dealer ={
-	"count":0
+	"count":0,
+	"turn": false
 }
 const DECK = [
 	{"value":[1,11],
@@ -119,10 +121,10 @@ $(document).ready(function(){
 	//load player information
     $("#balance").html("$" + player["balance"])
     $("#playerName").html(player["name"])
-
+    $("#b").on("click",function(){console.log("hi")})
+    
     //Assign starting cards to dealer and player by random numbers
-
-    function start(){
+    function assignDecks(){
     	for(let i = 1;i<=4;i++){
     		console.log(i)
     	let randomcard = Math.round(Math.random() * (DECK.length - 1))
@@ -141,7 +143,7 @@ $(document).ready(function(){
     	$(`#card${i}`).css("background-image",DECK[randomcard]["suits"][randomsuit])
     	}
     	}
-    }start()
+    }assignDecks()
 });
 
 //url('images/cards/AD.jpg')"

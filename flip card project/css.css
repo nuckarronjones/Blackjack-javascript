@@ -5,16 +5,14 @@
 	color:white;
 	font-family: 'Quicksand', sans-serif;
 }
-
 .background{
-	position:absolute;
 	background-color:black;
-	width:100%;
-	height:100%;
+	background-size: cover;
 	background-image:url("images/casino.jpg");
-	background-position:center;
-	background-size:cover;
-	filter:brightness(80%) blur(3px);
+	position: fixed;
+	min-width:100%;
+	min-height:100%;
+	filter:brightness(70%) blur(6px);
 	z-index: -1;
 }
 /*HEADS UP DISPLAY*/
@@ -33,11 +31,10 @@
 /*BEGIN CONTENT*/
 #wrapper{
 	display:grid;
-	grid-template-rows: 1fr 6fr 3fr;
+	grid-template-rows: 1fr 6fr;
 	grid-template-areas:
 	"hud"
-	"body"
-	"controls";
+	"body";
 }
 	#hud{
 		grid-area:hud;
@@ -46,7 +43,19 @@
 	.body{
 		position:relative;
 		grid-area:body;
-		margin:10px;
+		margin-left:10px;
+		margin-right:10px;
+		/*background-color:orange;*/
+	}
+	.test{
+		position:absolute;
+		/*background-color: orange;*/
+		top:0;
+		bottom:0;
+		right:20%;
+		left:20%;
+		margin:130px;
+		z-index: 9999;
 	}
 		#dealer{
 			position: absolute;
@@ -62,13 +71,13 @@
 			text-align:center;
 
 		}
-			#dealer span{
+			.bottom{
 				font-weight: bold;
 				font-size:20pt;
 				position:absolute;
 				left:0;
 				right:0;
-				bottom:-40px;
+				bottom:-70px;
 			}
 		#player{
 			position: absolute;
@@ -83,14 +92,6 @@
 			border-radius: 50%;
 			text-align:center;
 		}
-			#player span{
-				font-weight: bold;
-				font-size:20pt;
-				position:absolute;
-				left:0;
-				right:0;
-				bottom:-40px;
-			}
 		#dealerCards{
 			position: absolute;
 			height:200px;
@@ -107,6 +108,7 @@
 		}
 			.cardFormat{/*Format for all cards, DRY method*/
 				height:100px;
+				width:75px;
 				background-size:100% 100%;
 				border-radius:5px;
 				box-shadow: 2px 2px 5px black;
@@ -124,6 +126,7 @@
 			margin:auto;
 			top:0;bottom:0;right:0;
 			grid-gap:10px;
+			z-index: 999;
 
 			display:grid;
 			grid-template-rows:1fr 1fr;
@@ -144,12 +147,41 @@
 			width:50%;
 			margin:auto;
 			right:0;left:0;top:0;bottom:0;
-			z-index: -1;
+			z-index: 999;
 		}
 	.controls{
-		position: relative;
-		grid-area:controls;
-		background-color: red;
-		filter:opacity(.2);
-		margin:10px;
+		position: fixed;
+    	bottom: 0;
+    	width: 100%;
+    	height:130px;
+    	/*background-color:red;*/
 	}
+	#buttonGrid{
+		position: absolute;
+		margin:auto;
+		right:0;
+		top:0;
+		bottom:0;
+		width:33%;
+		margin:10px;
+
+		display:grid;
+		grid-template-columns: 2fr 2fr;
+		grid-template-rows: 2fr 2fr;
+		grid-gap:20px;
+		grid-template-areas:
+		"Hit Double"
+		"Stay Surrender"
+		;
+	}
+		.buttonStyle{
+			background:transparent;
+			background-color:black;
+			border:2px solid white;
+			font-size: 20pt;
+		}
+		.buttonStyle:hover{
+			background-color:white;
+			color:black;
+			font-size: 23pt;
+		}
