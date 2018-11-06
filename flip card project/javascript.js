@@ -2,7 +2,11 @@
 let player = {
 	"profilePicture": "url('images/player.png')",
 	"name": "Player1",
-	"balance": 100000
+	"balance": 100000,
+	"count": 0
+}
+let dealer ={
+	"count":0
 }
 const DECK = [
 	{"value":[1,11],
@@ -115,5 +119,29 @@ $(document).ready(function(){
 	//load player information
     $("#balance").html("$" + player["balance"])
     $("#playerName").html(player["name"])
-    //$(".body").css("background-image",DECK[0]["suits"][0])
+
+    //Assign starting cards to dealer and player by random numbers
+
+    function start(){
+    	for(let i = 1;i<=4;i++){
+    		console.log(i)
+    	let randomcard = Math.round(Math.random() * (DECK.length - 1))
+    	let randomsuit = Math.round(Math.random() * 3)
+    	if(i < 2){//only goes once, assigns visible dealer card
+    		console.log("dealer")
+    		$("#dealerCards").append(`<div id='card1' class='cardFormat'></div>`)
+    		$(`#card1`).css("background-image",DECK[randomcard]["suits"][randomsuit])
+
+    		$("#dealerCards").append(`<div id='card2' class='cardFormat'></div>`)
+    		$(`#card2`).css("background-image","url('images/cards/purple_back.jpg')")
+    		i++
+    	}
+    	else if(i > 2){
+    	$("#playerCards").append(`<div id='card${i}' class='cardFormat'></div>`)
+    	$(`#card${i}`).css("background-image",DECK[randomcard]["suits"][randomsuit])
+    	}
+    	}
+    }start()
 });
+
+//url('images/cards/AD.jpg')"

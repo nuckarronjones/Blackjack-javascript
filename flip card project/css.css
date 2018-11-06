@@ -47,8 +47,6 @@
 		position:relative;
 		grid-area:body;
 		margin:10px;
-		background-color:green;
-		filter:opacity(.5);
 	}
 		#dealer{
 			position: absolute;
@@ -93,20 +91,57 @@
 				right:0;
 				bottom:-40px;
 			}
-		.card{
-			position:absolute;
-			height:100px;
+		#dealerCards{
+			position: absolute;
+			height:200px;
 			width:75px;
-			background-image: url("images/cards/2H.jpg");
-			background-size: 100% 100%;
-			border-radius:10px;
-			box-shadow: 1px 1px 5px black;
+			margin:auto;
+			top:0;bottom:0;left:0;
+			grid-gap:10px;
+
+			display:grid;
+			grid-template-rows:1fr 1fr;
+			grid-template-areas:
+			"cardone"
+			"cardtwo";
 		}
+			.cardFormat{/*Format for all cards, DRY method*/
+				height:100px;
+				background-size:100% 100%;
+				border-radius:5px;
+				box-shadow: 2px 2px 5px black;
+			}
+			#card1{
+				grid-area:cardone;
+			}
+			#card2{
+				grid-area:cardtwo;
+			}
+		#playerCards{
+			position: absolute;
+			height:200px;
+			width:75px;
+			margin:auto;
+			top:0;bottom:0;right:0;
+			grid-gap:10px;
+
+			display:grid;
+			grid-template-rows:1fr 1fr;
+			grid-template-areas:
+			"pcardone"
+			"pcardtwo";
+		}
+			#card3{
+				grid-area:pcardone;
+			}
+			#card4{
+				grid-area:pcardtwo;
+			}
+
 		#bodyWrapper{
 			position: absolute;
-			background-color:pink;
 			height:100%;
-			width:40%;
+			width:50%;
 			margin:auto;
 			right:0;left:0;top:0;bottom:0;
 			z-index: -1;
