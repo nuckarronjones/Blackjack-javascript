@@ -20,25 +20,17 @@
 		</div>
 		<!--START OF CONTENT-->
 		<div class="body">
-			<div id="player"><div class="bottom"><p id="playerName"></p><p><em>Count:--</em></p></div></div>
-			<div id="dealer"><div class="bottom"><p>Dealer</p><p><em>Count:--</em></p></div></div>
-			<div class="test"><ul style="position:absolute;right:0;bottom:0;margin:auto">
-				<li class="cardFormat" style="background-image:url('images/cards/2H.jpg'); display:inline-block;margin-left:-50px"></li>
-				<li class="cardFormat" style="background-image:url('images/cards/2H.jpg'); display:inline-block;margin-left:-50px"></li>
-				<li class="cardFormat" style="background-image:url('images/cards/2H.jpg'); display:inline-block;margin-left:-50px"></li>
-				<li class="cardFormat" style="background-image:url('images/cards/2H.jpg'); display:inline-block;margin-left:-50px"></li>
-				<li class="cardFormat" style="background-image:url('images/cards/2H.jpg'); display:inline-block;margin-left:-50px"></li>
-				<li class="cardFormat" style="background-image:url('images/cards/2H.jpg'); display:inline-block;margin-left:-50px"></li>
-				<li class="cardFormat" style="background-image:url('images/cards/2H.jpg'); display:inline-block;margin-left:-50px"></li>
-			</ul>
-			<ul style="position:absolute;left:0;top:0;margin:auto">
-				<li class="cardFormat" style="background-image:url('images/cards/2H.jpg'); display:inline-block;margin-right:-50px"></li>
-				<li class="cardFormat" style="background-image:url('images/cards/2H.jpg'); display:inline-block;margin-right:-50px"></li>
-				<li class="cardFormat" style="background-image:url('images/cards/2H.jpg'); display:inline-block;margin-right:-50px"></li>
-				<li class="cardFormat" style="background-image:url('images/cards/2H.jpg'); display:inline-block;margin-right:-50px"></li>
-				<li class="cardFormat" style="background-image:url('images/cards/2H.jpg'); display:inline-block;margin-right:-50px"></li>
-				<li class="cardFormat" style="background-image:url('images/cards/2H.jpg'); display:inline-block;margin-right:-50px"></li>
-				<li class="cardFormat" style="background-image:url('images/cards/2H.jpg'); display:inline-block;margin-right:-50px"></li>
+			<div id="player"><div class="bottom"><p id="playerName"></p><p><em id="countP"></em></p></div></div>
+			<div id="dealer"><div class="bottom"><p>Dealer</p><p><em id="countD"></em></p></div></div>
+			<!-- PLACE TO DISPLAY DRAWN CARDS, APPEND TO UL AS CARDS ARE DRAWN -->
+			<div class="drawCards">
+				<ul class="ulPlayer">
+					<!-- keep for formatting
+					<li class="cardFormat playerCard"></li> ---------------->
+				</ul>
+			<ul class="ulDealer">
+				<!-- keep for formatting
+				<li class="cardFormat dealerCard"></li> ----------------->
 			</ul></div>
 			<!--CENTER WRAPPER FOR BODY, CARD SPACE-->
 			<div id="bodyWrapper">
@@ -46,11 +38,11 @@
 				<div id="dealerCards">
 					<!--KEEP FOR FORMATTING
 					<div id="card1"></div>
-					<div id="card2"></div> -->
+					<div id="card2"></div> ----------------------->
 				</div>
 				<div id="playerCards">
 					<!-- KEEP FOR FORMATTING
-					<div id="card3"></div>-->
+					<div id="card3"></div>------------------------>
 				</div>
 			</div>
 

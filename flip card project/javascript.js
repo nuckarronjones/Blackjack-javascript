@@ -11,7 +11,7 @@ let dealer ={
 	"turn": false
 }
 const DECK = [
-	{"value":[1,11],
+	{"value":11,
 		"card":"Ace",
 		"suits":[
 			'url("images/cards/AH.jpg")',
@@ -117,32 +117,93 @@ const DECK = [
 			]}
 ]
 
+/*************************************************************************************************
+THINGS TO RESET AFTER EACH HAND : PLAYERCOUNT, PLAYER TURN, CARDNUM , PLAYER BALANCE, ul FOR CARDS 
+**************************************************************************************************/
+
 $(document).ready(function(){
-	//load player information
+/////initiate variables, load info
+
+	//DRY coding, use this and not repetition
+    //Random value generator function to be referenced in objects
+    let randomValue = function(){
+    	return Math.round(Math.random() * (DECK.length - 1))
+    }
+    //Random suit generator function to be referenced in objects
+    let randomSuit = function(){
+    	return Math.round(Math.random() * 3)
+    }
+
+    let playerCount = player["count"]
+    //Draw Player Card
+
+    function TempObj(){
+    	this.randomValue = randomValue(),
+    	this.randomalue2 = randomValue(),
+    	this.randomSuit = randomSuit(),
+
+    	this.deckCardValue = DECK[this.randomValue]["value"],
+    	this.suitDecal = DECK[this.randomValue]["suits"][this.randomSuit]
+    }
+
+    //load player/game information
     $("#balance").html("$" + player["balance"])
     $("#playerName").html(player["name"])
-    $("#b").on("click",function(){console.log("hi")})
-    
-    //Assign starting cards to dealer and player by random numbers
-    function assignDecks(){
-    	for(let i = 1;i<=4;i++){
-    		console.log(i)
-    	let randomcard = Math.round(Math.random() * (DECK.length - 1))
-    	let randomsuit = Math.round(Math.random() * 3)
-    	if(i < 2){//only goes once, assigns visible dealer card
-    		console.log("dealer")
-    		$("#dealerCards").append(`<div id='card1' class='cardFormat'></div>`)
-    		$(`#card1`).css("background-image",DECK[randomcard]["suits"][randomsuit])
+    $("#countP").append(player["count"])
+    $("#countD").append(dealer["count"])		
 
-    		$("#dealerCards").append(`<div id='card2' class='cardFormat'></div>`)
-    		$(`#card2`).css("background-image","url('images/cards/purple_back.jpg')")
-    		i++
+
+///////drawing player cards on hit Button
+{
+	let cardNum = 0;
+
+    $("#hit").on("click",function(){
+    	let history = new TempObj()
+
+    	console.log(history)
+
+    	if(player["turn"]){
+    		let card = `<li id=playerCard${cardNum} class='cardFormat playerCard'></li>`
+
+    		$(".ulPlayer").append(card)
+    		$(`#playerCard${cardNum}`).css("background-image",history["suitDecal"])
+    		playerCount = playerCount + history["deckCardValue"]
+    		$("#countP").html(playerCount)
     	}
-    	else if(i > 2){
-    	$("#playerCards").append(`<div id='card${i}' class='cardFormat'></div>`)
-    	$(`#card${i}`).css("background-image",DECK[randomcard]["suits"][randomsuit])
-    	}
-    	}
+    		if(playerCount >= 21){
+    			$("button").prop("disabled",true).css("filter","opacity(.5)")
+    		}
+    	cardNum ++
+    })
+}
+///////Upon button press, player stays, switching turns to dealer
+	$("#stay").on("click",function(){
+		$("button").prop("disabled",true).css("filter","opacity(.5)")
+	})
+
+//////Assign starting cards to dealer and player by random numbers
+/*************************************************************************************Fix below, above works...but below cant count cards right*/
+    function assignDecks(){
+    	let history2 = new TempObj()
+    	console.log(history2)
+
+    	for(let i = 1;i<=4;i++){
+	    	if(i < 2){//only goes once, assigns visible dealer card
+	    		console.log("dealer")
+	    		$("#dealerCards").append(`<div id='card1' class='cardFormat'></div>`)
+	    		$(`#card1`).css("background-image",history2["suitDecal"])
+
+	    		$("#dealerCards").append(`<div id='card2' class='cardFormat'></div>`)
+	    		$(`#card2`).css("background-image","url('images/cards/Red_back.jpg')")
+	    		i++
+	    	}
+	    	else if(i > 2){
+	    		$("#playerCards").append(`<div id='card${i}' class='cardFormat'></div>`)
+	    		$(`#card${i}`).css("background-image",history2["suitDecal"])
+	    		playerCount = playerCount + history2["deckCardValue"]
+    			$("#countP").html(playerCount)
+	    	}
+    	};
     }assignDecks()
 });
 
