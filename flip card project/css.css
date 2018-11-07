@@ -36,7 +36,7 @@
 /*BEGIN CONTENT*/
 #wrapper{
 	display:grid;
-	grid-template-rows: 60px  450px 100px;
+	grid-template-rows: 65px  450px 100px;
 	grid-template-areas:
 	"hud"
 	"body"
@@ -45,6 +45,7 @@
 	#hud{
 		grid-area:hud;
 		box-shadow: 2px 2px 10px black;
+		padding-bottom:15px;
 	}
 	.body{
 		position:relative;
@@ -77,7 +78,6 @@
 			display:inline-block;margin-left:-30px;
 		}
 		.drawCards .dealerCard{
-			background-color:pink;
 			display:inline-block;margin-right:-30px;
 		}
 

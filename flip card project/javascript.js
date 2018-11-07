@@ -133,6 +133,7 @@ $(document).ready(function(){
     let playerCount = player["count"]
     let dealerCount = dealer["count"]
     let cardNum = 0;
+    let cardNum2 = 0;
     //Random value generator function to be referenced in objects
     let randomValue = function(){
     	return Math.round(Math.random() * (DECK.length - 1))
@@ -162,14 +163,17 @@ $(document).ready(function(){
     }
     gameInfoUpdate();
     console.log(playerCount + " playercount")
+
    	//Turn changes , disabled button features
 	let disabled = function(){
 		return $("button").prop("disabled",true).css("filter","opacity(.5)")
 	}
 	let playerTurnChange = function(){
 		if(player["turn"]){
+
 		return player["turn"] = false
 		}else if(player["turn"] != true){
+
 		return  player["turn"] = true
 		}
 	}
@@ -178,17 +182,32 @@ $(document).ready(function(){
 		console.log("3")
 		return dealer["turn"] = false
 
-			}else if(dealer["turn"] != true){
+		}else if(dealer["turn"] != true){
 		console.log("4")
 		return dealer["turn"] = true
 		}
 	}
+	//lost round
+	let lost = function(){
+		player["balance"] = player["balance"] - player["bet"]
+		gameInfoUpdate();
+	}
+	//dealer turn
+	let dealerTurn = function(){
+		if(dealer["turn"]){
+			while(dealerCount <= 17){
+			break;
+		}
+
+		}
+	}
+
     //upon each time, a new random assortment of numbers are created as a new object
     function draw(){
     	let history = new TempObj()
 
     	if(player["turn"]){
-    		let card = `<li id=playerCard${cardNum} class='cardFormat playerCard'></li>`
+    		let card = `<li id='playerCard${cardNum}' class='cardFormat playerCard'></li>`
 
     		$(".ulPlayer").append(card)
     		$(`#playerCard${cardNum}`).css("background-image",history["suitDecal"])
@@ -203,18 +222,45 @@ $(document).ready(function(){
 				console.log(dealer["turn"] + " dealer turn")
 				if(playerCount >= 22){
 					alert("bust!")
+					lost()
 				}
 			}
+		//for card variable, each new card will be different
     	cardNum ++
     }
+    function dealerDraw(){
+    	while(dealerCount <= 17){
+    		let history = new TempObj()
+    		if(dealer["turn"]){
+    			let card = `<li id='dealerCard${cardNum2}' class='cardFormat dealerCard'></li>`
+
+    			$(".ulDealer").append(card)
+    			$(`#dealerCard${cardNum2}`).css("background-image",history["suitDecal"])
+    			console.log(history["suitDecal"])
+    			console.log(cardNum2)
+    			dealerCount = dealerCount + history["deckCardValue"]
+    			cardNum2 ++
+    			gameInfoUpdate()
+    		}
+    		/*if(dealerCount >= 21){
+    				break;
+				if(dealerCount >= 22){
+					break;
+				}
+			}
+		//for card variable, each new card will be different*/
+   		}
+	}
 
 	//draw card function
 /////////////START
 
-    $("#hit").on("click",function(){draw()})
 	//Adding button functionalities, if a button calls for a next turn, diabled will be called
+    $("#hit").on("click",function(){
+    	draw();
+    })
 
-{	//functions break up actions
+	//functions break up actions
 	console.log(player["turn"] + " ->player start turn")
 	console.log(dealer["turn"] + " ->dealer start turn")
 
@@ -224,6 +270,7 @@ $(document).ready(function(){
 		dealerTurnChange();
 		console.log(player["turn"] + " player turn")
 		console.log(dealer["turn"] + " dealer turn")
+		dealerDraw();
 	})
 	$("#surrender").on("click",function(){ 
 		playerTurnChange();
@@ -240,16 +287,14 @@ $(document).ready(function(){
 		player["bet"] = player["bet"] * 2
 		console.log(player["bet"])
 		gameInfoUpdate()
-		if(playerCount >= 21){
-			alert("bust!")
-		}
+		dealerDraw();
+
 		console.log(playerCount + " player count")
 		console.log(player)
 		console.log(dealer)
 		console.log(player["turn"] + " player turn")
 		console.log(dealer["turn"] + " dealer turn")
 	})
-}
 
 	//assign starting cards to dealer and player by random numbers START OF GAME 
     function assignDecks(){
@@ -261,7 +306,7 @@ $(document).ready(function(){
 	    		$("#dealerCards").append(`<div id='card2' class='cardFormat'></div>`)
 	    		$(`#card2`).css("background-image","url('images/cards/Red_back.jpg')")
 	    		dealerCount = dealerCount +  history2["deckCardValue"]
-	    		
+
 	    		gameInfoUpdate()
 	    		i++
 	    	}
