@@ -1,17 +1,24 @@
+/***********************************************
+*THIS APPLICATION WAS CREATED BY NICHOLAS JONES*
+*                      *                       *
+************************************************/
+
 //VARIABLES
 let player = {
 	"profilePicture": "url('images/player.png')",
 	"name": "Player1",
 	"balance": 100000,
 	"count": 0,
-	"turn": true
+	"turn": true,
+	"bet":100
 }
 let dealer ={
 	"count":0,
-	"turn": false
+	"turn": false,
+	"hiddenCard": null
 }
 const DECK = [
-	{"value":11,
+	{"value":1,
 		"card":"Ace",
 		"suits":[
 			'url("images/cards/AH.jpg")',
@@ -118,13 +125,14 @@ const DECK = [
 ]
 
 /*************************************************************************************************
-THINGS TO RESET AFTER EACH HAND : PLAYERCOUNT, PLAYER TURN, CARDNUM , PLAYER BALANCE, ul FOR CARDS 
+THINGS TO RESET AFTER EACH ROUND : PLAYERCOUNT(reset), PLAYER TURN(reset), CARDNUM? , PLAYER BALANCE(reset), ul FOR CARDS(clear)
 **************************************************************************************************/
 
 $(document).ready(function(){
-/////initiate variables, load info
-
-	//DRY coding, use this and not repetition
+/////////////VARIABLES/ FUNCTION SETUPS
+    let playerCount = player["count"]
+    let dealerCount = dealer["count"]
+    let cardNum = 0;
     //Random value generator function to be referenced in objects
     let randomValue = function(){
     	return Math.round(Math.random() * (DECK.length - 1))
@@ -133,10 +141,7 @@ $(document).ready(function(){
     let randomSuit = function(){
     	return Math.round(Math.random() * 3)
     }
-
-    let playerCount = player["count"]
-    //Draw Player Card
-
+    //temporary object stores random variables, when called, each time will produce new results
     function TempObj(){
     	this.randomValue = randomValue(),
     	this.randomalue2 = randomValue(),
@@ -147,20 +152,40 @@ $(document).ready(function(){
     }
 
     //load player/game information
-    $("#balance").html("$" + player["balance"])
     $("#playerName").html(player["name"])
-    $("#countP").append(player["count"])
-    $("#countD").append(dealer["count"])		
 
+    let gameInfoUpdate = function(){
+    	$("#bet").html("Bet: $" + player["bet"])
+    	$("#countD").html(dealerCount)
+    	$("#balance").html("$" + player["balance"])
+    	$("#countP").html(playerCount)
+    }
+    gameInfoUpdate();
+    console.log(playerCount + " playercount")
+   	//Turn changes , disabled button features
+	let disabled = function(){
+		return $("button").prop("disabled",true).css("filter","opacity(.5)")
+	}
+	let playerTurnChange = function(){
+		if(player["turn"]){
+		return player["turn"] = false
+		}else if(player["turn"] != true){
+		return  player["turn"] = true
+		}
+	}
+	let dealerTurnChange = function(){
+		if(dealer["turn"]){
+		console.log("3")
+		return dealer["turn"] = false
 
-///////drawing player cards on hit Button
-{
-	let cardNum = 0;
-
-    $("#hit").on("click",function(){
+			}else if(dealer["turn"] != true){
+		console.log("4")
+		return dealer["turn"] = true
+		}
+	}
+    //upon each time, a new random assortment of numbers are created as a new object
+    function draw(){
     	let history = new TempObj()
-
-    	console.log(history)
 
     	if(player["turn"]){
     		let card = `<li id=playerCard${cardNum} class='cardFormat playerCard'></li>`
@@ -171,40 +196,90 @@ $(document).ready(function(){
     		$("#countP").html(playerCount)
     	}
     		if(playerCount >= 21){
-    			$("button").prop("disabled",true).css("filter","opacity(.5)")
-    		}
+    			playerTurnChange();
+    			disabled();
+    			dealerTurnChange();
+    			console.log(player["turn"] + " player turn")
+				console.log(dealer["turn"] + " dealer turn")
+				if(playerCount >= 22){
+					alert("bust!")
+				}
+			}
     	cardNum ++
-    })
-}
-///////Upon button press, player stays, switching turns to dealer
-	$("#stay").on("click",function(){
-		$("button").prop("disabled",true).css("filter","opacity(.5)")
+    }
+
+	//draw card function
+/////////////START
+
+    $("#hit").on("click",function(){draw()})
+	//Adding button functionalities, if a button calls for a next turn, diabled will be called
+
+{	//functions break up actions
+	console.log(player["turn"] + " ->player start turn")
+	console.log(dealer["turn"] + " ->dealer start turn")
+
+	$("#stay").on("click",function(){ 
+		playerTurnChange();
+		disabled();
+		dealerTurnChange();
+		console.log(player["turn"] + " player turn")
+		console.log(dealer["turn"] + " dealer turn")
 	})
+	$("#surrender").on("click",function(){ 
+		playerTurnChange();
+		disabled();
+		dealerTurnChange();
+		console.log(player["turn"] + " player turn")
+		console.log(dealer["turn"] + " dealer turn")
+	})
+	$("#doubleDown").on("click",function(){ 
+		draw();
+		playerTurnChange();
+		disabled();
+		dealerTurnChange();
+		player["bet"] = player["bet"] * 2
+		console.log(player["bet"])
+		gameInfoUpdate()
+		if(playerCount >= 21){
+			alert("bust!")
+		}
+		console.log(playerCount + " player count")
+		console.log(player)
+		console.log(dealer)
+		console.log(player["turn"] + " player turn")
+		console.log(dealer["turn"] + " dealer turn")
+	})
+}
 
-//////Assign starting cards to dealer and player by random numbers
-/*************************************************************************************Fix below, above works...but below cant count cards right*/
+	//assign starting cards to dealer and player by random numbers START OF GAME 
     function assignDecks(){
-    	let history2 = new TempObj()
-    	console.log(history2)
-
     	for(let i = 1;i<=4;i++){
+    		let history2 = new TempObj()
 	    	if(i < 2){//only goes once, assigns visible dealer card
-	    		console.log("dealer")
 	    		$("#dealerCards").append(`<div id='card1' class='cardFormat'></div>`)
 	    		$(`#card1`).css("background-image",history2["suitDecal"])
-
 	    		$("#dealerCards").append(`<div id='card2' class='cardFormat'></div>`)
 	    		$(`#card2`).css("background-image","url('images/cards/Red_back.jpg')")
+	    		dealerCount = dealerCount +  history2["deckCardValue"]
+	    		
+	    		gameInfoUpdate()
 	    		i++
 	    	}
 	    	else if(i > 2){
+	    		let history2 = new TempObj()
 	    		$("#playerCards").append(`<div id='card${i}' class='cardFormat'></div>`)
 	    		$(`#card${i}`).css("background-image",history2["suitDecal"])
 	    		playerCount = playerCount + history2["deckCardValue"]
-    			$("#countP").html(playerCount)
+	    		console.log(playerCount + " playercount")
+    			gameInfoUpdate()
 	    	}
     	};
-    }assignDecks()
+    }assignDecks();
 });
 
-//url('images/cards/AD.jpg')"
+//things to add:
+	//achievements
+	//start menu, select user image
+	//select difficulty
+	//ability yo upload user image
+	//localstorage for player info, start new game
