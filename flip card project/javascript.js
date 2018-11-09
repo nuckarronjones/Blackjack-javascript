@@ -2,7 +2,6 @@
 *THIS APPLICATION WAS CREATED BY NICHOLAS JONES*
 *                      *                       *
 ************************************************/
-
 //VARIABLES
 let player = {
 	"profilePicture": "url('images/player.png')",
@@ -15,7 +14,8 @@ let player = {
 let dealer ={
 	"count":0,
 	"turn": false,
-	"hiddenCard": null
+	"hiddenCardValue": 0,
+	"hiddenCardSuit": null
 }
 const DECK = [
 	{"value":1,
@@ -125,7 +125,7 @@ const DECK = [
 ]
 
 /*************************************************************************************************
-THINGS TO RESET AFTER EACH ROUND : PLAYERCOUNT(reset), PLAYER TURN(reset), CARDNUM? , PLAYER BALANCE(reset), ul FOR CARDS(clear)
+THINGS TO RESET AFTER EACH ROUND : PLAYERCOUNT(reset), PLAYER TURN(reset), CARDNUM? , PLAYER BALANCE(reset), ul FOR CARDS(clear), BUTON PROPS
 **************************************************************************************************/
 
 $(document).ready(function(){
@@ -162,11 +162,13 @@ $(document).ready(function(){
     	$("#countP").html(playerCount)
     }
     gameInfoUpdate();
-    console.log(playerCount + " playercount")
 
    	//Turn changes , disabled button features
 	let disabled = function(){
 		return $("button").prop("disabled",true).css("filter","opacity(.5)")
+	}
+	let enabled = function(){
+		return $("button").prop("disabled",false).css("filter","opacity(1)")
 	}
 	let playerTurnChange = function(){
 		if(player["turn"]){
@@ -191,15 +193,13 @@ $(document).ready(function(){
 	let lost = function(){
 		player["balance"] = player["balance"] - player["bet"]
 		gameInfoUpdate();
+		alert(player["name"] + " lost!")
+		assignDecks();
 	}
-	//dealer turn
-	let dealerTurn = function(){
-		if(dealer["turn"]){
-			while(dealerCount <= 17){
-			break;
-		}
-
-		}
+	let win = function(){
+		player["balance"] = player["balance"] + player["bet"]
+		alert(player["name"] + " wins!")
+		assignDecks()
 	}
 
     //upon each time, a new random assortment of numbers are created as a new object
@@ -214,17 +214,11 @@ $(document).ready(function(){
     		playerCount = playerCount + history["deckCardValue"]
     		$("#countP").html(playerCount)
     	}
-    		if(playerCount >= 21){
-    			playerTurnChange();
-    			disabled();
-    			dealerTurnChange();
-    			console.log(player["turn"] + " player turn")
-				console.log(dealer["turn"] + " dealer turn")
-				if(playerCount >= 22){
-					alert("bust!")
-					lost()
-				}
-			}
+		if(playerCount > 21){
+			console.log("test here 2")
+				return lost()
+		}
+		
 		//for card variable, each new card will be different
     	cardNum ++
     }
@@ -236,20 +230,25 @@ $(document).ready(function(){
 
     			$(".ulDealer").append(card)
     			$(`#dealerCard${cardNum2}`).css("background-image",history["suitDecal"])
-    			console.log(history["suitDecal"])
-    			console.log(cardNum2)
     			dealerCount = dealerCount + history["deckCardValue"]
     			cardNum2 ++
     			gameInfoUpdate()
     		}
-    		/*if(dealerCount >= 21){
-    				break;
-				if(dealerCount >= 22){
-					break;
-				}
-			}
-		//for card variable, each new card will be different*/
-   		}
+    	}
+
+    	//resulting comparison from final dealer draw -> win/lose
+    	if(dealerCount > playerCount && dealerCount <= 21){
+    		console.log("test here")
+    		return lost();
+    	}else if(playerCount > dealerCount && playerCount <= 21){
+    		return win()
+    	}else if(dealerCount > 21){
+    		return win()
+    	}else if(dealerCount == playerCount){
+    		alert("Push!")
+    		return assignDecks()
+    	}
+   		
 	}
 
 	//draw card function
@@ -260,44 +259,46 @@ $(document).ready(function(){
     	draw();
     })
 
-	//functions break up actions
-	console.log(player["turn"] + " ->player start turn")
-	console.log(dealer["turn"] + " ->dealer start turn")
-
+	//functions break up button actions
 	$("#stay").on("click",function(){ 
 		playerTurnChange();
 		disabled();
 		dealerTurnChange();
-		console.log(player["turn"] + " player turn")
-		console.log(dealer["turn"] + " dealer turn")
 		dealerDraw();
 	})
 	$("#surrender").on("click",function(){ 
-		playerTurnChange();
+		//dont change turns, next round player starts, just looses hand. honestly, who would choose this option?
 		disabled();
-		dealerTurnChange();
-		console.log(player["turn"] + " player turn")
-		console.log(dealer["turn"] + " dealer turn")
+		lost();
 	})
 	$("#doubleDown").on("click",function(){ 
-		draw();
-		playerTurnChange();
-		disabled();
-		dealerTurnChange();
 		player["bet"] = player["bet"] * 2
-		console.log(player["bet"])
-		gameInfoUpdate()
+		draw();
+		disabled();
+		playerTurnChange();
+		dealerTurnChange();
 		dealerDraw();
-
-		console.log(playerCount + " player count")
-		console.log(player)
-		console.log(dealer)
-		console.log(player["turn"] + " player turn")
-		console.log(dealer["turn"] + " dealer turn")
+		/*if(playerCount < 21){
+			dealerDraw();
+		}*/
 	})
 
 	//assign starting cards to dealer and player by random numbers START OF GAME 
     function assignDecks(){
+    	//after each round, changed variables/stylings will be reset
+    	cardNum = 0;
+    	cardNum2 = 0;
+    	playerCount = 0;
+    	dealerCount = 0;
+    	player["turn"] = true;
+    	dealer["turn"] = false;
+    	player["bet"] = 100;
+    	$(".ulPlayer").html("")
+    	$(".ulDealer").html("")
+    	$("#playerCards").html("")
+    	$("#dealerCards").html("")
+    	enabled()
+
     	for(let i = 1;i<=4;i++){
     		let history2 = new TempObj()
 	    	if(i < 2){//only goes once, assigns visible dealer card
@@ -305,6 +306,8 @@ $(document).ready(function(){
 	    		$(`#card1`).css("background-image",history2["suitDecal"])
 	    		$("#dealerCards").append(`<div id='card2' class='cardFormat'></div>`)
 	    		$(`#card2`).css("background-image","url('images/cards/Red_back.jpg')")
+
+	    		dealer["hiddenCard"]
 	    		dealerCount = dealerCount +  history2["deckCardValue"]
 
 	    		gameInfoUpdate()
@@ -315,7 +318,6 @@ $(document).ready(function(){
 	    		$("#playerCards").append(`<div id='card${i}' class='cardFormat'></div>`)
 	    		$(`#card${i}`).css("background-image",history2["suitDecal"])
 	    		playerCount = playerCount + history2["deckCardValue"]
-	    		console.log(playerCount + " playercount")
     			gameInfoUpdate()
 	    	}
     	};

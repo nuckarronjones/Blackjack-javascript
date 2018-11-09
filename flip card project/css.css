@@ -75,7 +75,7 @@
 			left:0;bottom:0;margin:auto;
 		}
 		.drawCards .playerCard{
-			display:inline-block;margin-left:-30px;
+			display:inline-block;margin-left:-30px;margin-bottom:20px;
 		}
 		.drawCards .dealerCard{
 			display:inline-block;margin-right:-30px;
