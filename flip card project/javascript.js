@@ -9,13 +9,17 @@ let player = {
 	"balance": 100000,
 	"count": 0,
 	"turn": true,
-	"bet":100
+	"bet":100,
+	// 0 - no value //1 = win // -1 = lost
+	"win": 0
 }
 let dealer ={
 	"count":0,
 	"turn": false,
 	"hiddenCardValue": 0,
-	"hiddenCardSuit": null
+	"hiddenCardSuit": null,
+	// 0 - no value //1 = win // -1 = lost
+	"win": 0
 }
 const DECK = [
 	{"value":1,
@@ -194,35 +198,46 @@ $(document).ready(function(){
 		player["balance"] = player["balance"] - player["bet"]
 		gameInfoUpdate();
 		alert(player["name"] + " lost!")
+		player["win"] = -1 /*experimental*/
+		console.log("player is lost" + player["win"])
 		assignDecks();
 	}
+	//win round
 	let win = function(){
 		player["balance"] = player["balance"] + player["bet"]
 		alert(player["name"] + " wins!")
+		player["win"] = 1/*experimental*/
+		console.log("player is win" + player["win"])
 		assignDecks()
 	}
 
     //upon each time, a new random assortment of numbers are created as a new object
     function draw(){
+    	console.log("DRAW FUCTION")
     	let history = new TempObj()
 
-    	if(player["turn"]){
     		let card = `<li id='playerCard${cardNum}' class='cardFormat playerCard'></li>`
 
     		$(".ulPlayer").append(card)
     		$(`#playerCard${cardNum}`).css("background-image",history["suitDecal"])
     		playerCount = playerCount + history["deckCardValue"]
     		$("#countP").html(playerCount)
-    	}
+
 		if(playerCount > 21){
 			console.log("test here 2")
-				return lost()
+			lost()
+		}
+		if(player["turn"] == false){
+			if(playerCount <= 21){
+				dealerDraw()
+			}
 		}
 		
 		//for card variable, each new card will be different
     	cardNum ++
     }
     function dealerDraw(){
+    	console.log("DEALER DRAW")
     	while(dealerCount <= 17){
     		let history = new TempObj()
     		if(dealer["turn"]){
@@ -238,7 +253,6 @@ $(document).ready(function(){
 
     	//resulting comparison from final dealer draw -> win/lose
     	if(dealerCount > playerCount && dealerCount <= 21){
-    		console.log("test here")
     		return lost();
     	}else if(playerCount > dealerCount && playerCount <= 21){
     		return win()
@@ -272,12 +286,20 @@ $(document).ready(function(){
 		lost();
 	})
 	$("#doubleDown").on("click",function(){ 
+		console.log('DOUBLE DOWN')
 		player["bet"] = player["bet"] * 2
-		draw();
-		disabled();
+
+		console.log(player["win"] + " player status")
 		playerTurnChange();
 		dealerTurnChange();
-		dealerDraw();
+		disabled();
+		draw();
+
+		//make sure player has not lost to continue
+		/*if(player["win"] == 0){
+			console.log("not false")
+			dealerDraw();
+		}
 		/*if(playerCount < 21){
 			dealerDraw();
 		}*/
@@ -286,17 +308,23 @@ $(document).ready(function(){
 	//assign starting cards to dealer and player by random numbers START OF GAME 
     function assignDecks(){
     	//after each round, changed variables/stylings will be reset
+    	console.log("NEW GAME")
     	cardNum = 0;
     	cardNum2 = 0;
     	playerCount = 0;
     	dealerCount = 0;
+
     	player["turn"] = true;
     	dealer["turn"] = false;
     	player["bet"] = 100;
+    	player["win"] = 0;
+    	dealer["win"] = 0;
+
     	$(".ulPlayer").html("")
     	$(".ulDealer").html("")
     	$("#playerCards").html("")
     	$("#dealerCards").html("")
+
     	enabled()
 
     	for(let i = 1;i<=4;i++){
