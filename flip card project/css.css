@@ -62,7 +62,6 @@
 		right:20%;
 		left:20%;
 		margin:130px;
-		z-index: 9999;
 		/*filter:opacity(.5);
 		background-color:orange;*/
 	}	/*CARD TYPES */
@@ -76,9 +75,11 @@
 		}
 		.drawCards .playerCard{
 			display:inline-block;margin-left:-30px;margin-bottom:20px;
+			z-index: 9999;
 		}
 		.drawCards .dealerCard{
 			display:inline-block;margin-right:-30px;
+			z-index: 9999;
 		}
 
 		#dealer{
@@ -135,6 +136,7 @@
 				background-size:100% 100%;
 				border-radius:5px;
 				box-shadow: 2px 2px 5px black;
+				z-index: 9999;
 			}
 			#card1{
 				grid-area:cardone;
@@ -149,7 +151,6 @@
 			margin:auto;
 			top:0;bottom:0;right:0;
 			grid-gap:10px;
-			z-index: 999;
 
 			display:grid;
 			grid-template-rows:1fr 1fr;
@@ -163,7 +164,41 @@
 			#card4{
 				grid-area:pcardtwo;
 			}
+			/*.move{
+				animation:move 1s;
+				animation-fill-mode: forwards;
+			}*/
 
+			.ani{
+			filter:opacity(0);
+
+			-webkit-animation:animate .5s;
+		   	-moz-animation:animate .5s;
+		    -o-animation:animate .5s;
+		    animation:animate .5s;
+
+			animation-fill-mode: forwards;
+			}
+			@-webkit-keyframes animate{
+				0%{-webkit-transform:translateX(-300px);}
+				100%{-webkit-filter:opacity(1);}
+				/*100%{transform:rotate(360deg)}*/
+			}
+			@-moz-keyframes animate{
+				0%{-moz-transform:translateX(-300px);}
+				100%{-moz-filter:opacity(1);}
+				/*100%{transform:rotate(360deg)}*/
+			}
+			@-o-keyframes animate{
+				0%{-o-transform:translateX(-300px);}
+				100%{-o-filter:opacity(1);}
+				/*100%{transform:rotate(360deg)}*/
+			}
+			@keyframes animate{
+				0%{transform:translateX(-300px);}
+				100%{filter:opacity(1);}
+				/*100%{transform:rotate(360deg)}*/
+			}
 		#bodyWrapper{
 			position: absolute;
 			height:100%;
@@ -204,3 +239,30 @@
 			color:black;
 			font-size: 23pt;
 		}
+.screen{
+	position: fixed;
+	height:100%;
+	width:100%;
+	background-color:black;
+	filter:opacity(.5);
+	z-index: 9999;
+	display: grid;
+	align-content: center;
+	justify-content: center;
+}
+.screen p {
+	filter:opacity(1);
+	font-size: 75pt;
+}
+
+.screen button{
+	position: relative;
+	margin:auto;
+	left:0;right:0;
+	width:200px;
+	color:black;
+	background-color:darkgrey;
+	height:75px;
+	font-size: 30pt;
+	border:2px solid black;
+}

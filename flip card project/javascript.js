@@ -185,30 +185,29 @@ $(document).ready(function(){
 	}
 	let dealerTurnChange = function(){
 		if(dealer["turn"]){
-		console.log("3")
 		return dealer["turn"] = false
 
 		}else if(dealer["turn"] != true){
-		console.log("4")
 		return dealer["turn"] = true
 		}
 	}
 	//lost round
 	let lost = function(){
-		player["balance"] = player["balance"] - player["bet"]
+		setTimeout(function(){player["balance"] = player["balance"] - player["bet"]
 		gameInfoUpdate();
-		alert(player["name"] + " lost!")
+		console.log(player["name"] + " lost!")
 		player["win"] = -1 /*experimental*/
 		console.log("player is lost" + player["win"])
-		assignDecks();
+		assignDecks();},2000)
+		
 	}
 	//win round
 	let win = function(){
-		player["balance"] = player["balance"] + player["bet"]
-		alert(player["name"] + " wins!")
+		setTimeout(function(){player["balance"] = player["balance"] + player["bet"]
+		console.log(player["name"] + " wins!")
 		player["win"] = 1/*experimental*/
 		console.log("player is win" + player["win"])
-		assignDecks()
+		assignDecks()},2000)
 	}
 
     //upon each time, a new random assortment of numbers are created as a new object
@@ -216,17 +215,18 @@ $(document).ready(function(){
     	console.log("DRAW FUCTION")
     	let history = new TempObj()
 
-    		let card = `<li id='playerCard${cardNum}' class='cardFormat playerCard'></li>`
+    		let card = `<li id='playerCard${cardNum}' class='cardFormat playerCard ani'></li>`
 
-    		$(".ulPlayer").append(card)
+    		//prepend. since the list items are pushed left by .append(). 
+    		$(".ulPlayer").prepend(card)
     		$(`#playerCard${cardNum}`).css("background-image",history["suitDecal"])
     		playerCount = playerCount + history["deckCardValue"]
     		$("#countP").html(playerCount)
 
 		if(playerCount > 21){
-			console.log("test here 2")
 			lost()
 		}
+		//this means that user has doubled down, check to ensure that player has switched turns from dbl down button 
 		if(player["turn"] == false){
 			if(playerCount <= 21){
 				dealerDraw()
@@ -236,34 +236,58 @@ $(document).ready(function(){
 		//for card variable, each new card will be different
     	cardNum ++
     }
-    function dealerDraw(){
-    	console.log("DEALER DRAW")
-    	while(dealerCount <= 17){
-    		let history = new TempObj()
-    		if(dealer["turn"]){
-    			let card = `<li id='dealerCard${cardNum2}' class='cardFormat dealerCard'></li>`
 
-    			$(".ulDealer").append(card)
-    			$(`#dealerCard${cardNum2}`).css("background-image",history["suitDecal"])
-    			dealerCount = dealerCount + history["deckCardValue"]
-    			cardNum2 ++
-    			gameInfoUpdate()
-    		}
+
+	function dealerDraw(){
+    	console.log("DEALER DRAW")
+
+    	//reveal card!
+    	dealerCount = dealerCount + dealer["hiddenCardValue"]
+    	$(`#card2`).css("background-image",dealer["hiddenCardSuit"])
+    	gameInfoUpdate()
+
+    	if(dealerCount <= 16){
+    		//time function to stop fast paced gameplay
+	    	let time = setInterval(function(){
+		    	let history = new TempObj()
+
+		    		if(dealer["turn"]){
+		    			let card = `<li id='dealerCard${cardNum2}' class='cardFormat dealerCard ani'></li>`
+
+		    			$(".ulDealer").append(card)
+		    			$(`#dealerCard${cardNum2}`).css("background-image",history["suitDecal"])
+		    			dealerCount = dealerCount + history["deckCardValue"]
+		    			cardNum2 ++
+		    			console.log(dealerCount + " DEALER COUNT")
+		    			gameInfoUpdate()
+		    		}
+		    	if(dealerCount >=16){
+		    		//no more dealer draws, clear timeout function and return win/lose check
+		    			clearInterval(time);
+		    			winLoseCheck()
+		    	}
+
+	    	},1000)
+
+    	}else{//dealercardcount is greater than/ equal to 17, no need to select card
+    		winLoseCheck()
     	}
 
     	//resulting comparison from final dealer draw -> win/lose
-    	if(dealerCount > playerCount && dealerCount <= 21){
-    		return lost();
-    	}else if(playerCount > dealerCount && playerCount <= 21){
-    		return win()
-    	}else if(dealerCount > 21){
-    		return win()
-    	}else if(dealerCount == playerCount){
-    		alert("Push!")
-    		return assignDecks()
-    	}
+    	function winLoseCheck(){
+	    	if(dealerCount > playerCount && dealerCount <= 21){
+	    		return lost();
+	    	}else if(playerCount > dealerCount && playerCount <= 21){
+	    		return win()
+	    	}else if(dealerCount > 21){
+	    		return win()
+	    	}else if(dealerCount == playerCount){
+	    		console.log("Push!")
+	    		return assignDecks()
+	    	}
+	    }
    		
-	}
+	};
 
 	//draw card function
 /////////////START
@@ -286,23 +310,12 @@ $(document).ready(function(){
 		lost();
 	})
 	$("#doubleDown").on("click",function(){ 
-		console.log('DOUBLE DOWN')
 		player["bet"] = player["bet"] * 2
-
-		console.log(player["win"] + " player status")
 		playerTurnChange();
 		dealerTurnChange();
 		disabled();
 		draw();
 
-		//make sure player has not lost to continue
-		/*if(player["win"] == 0){
-			console.log("not false")
-			dealerDraw();
-		}
-		/*if(playerCount < 21){
-			dealerDraw();
-		}*/
 	})
 
 	//assign starting cards to dealer and player by random numbers START OF GAME 
@@ -325,31 +338,40 @@ $(document).ready(function(){
     	$("#playerCards").html("")
     	$("#dealerCards").html("")
 
+    	//for buttons
     	enabled()
 
     	for(let i = 1;i<=4;i++){
     		let history2 = new TempObj()
-	    	if(i < 2){//only goes once, assigns visible dealer card
-	    		$("#dealerCards").append(`<div id='card1' class='cardFormat'></div>`)
+	    	if(i < 2){//only goes once, assigns visible dealer card, and hidden card
+	    		$("#dealerCards").append(`<div id='card1' class='cardFormat ani'></div>`)
 	    		$(`#card1`).css("background-image",history2["suitDecal"])
-	    		$("#dealerCards").append(`<div id='card2' class='cardFormat'></div>`)
+	    		$("#dealerCards").append(`<div id='card2' class='cardFormat ani'></div>`)
 	    		$(`#card2`).css("background-image","url('images/cards/Red_back.jpg')")
 
-	    		dealer["hiddenCard"]
+	    		function hiddenCard(){//assigns hidden card for dealer
+	    			let history2 = new TempObj()
+	    			dealer["hiddenCardSuit"] = history2["suitDecal"]
+	    			dealer["hiddenCardValue"] = history2["deckCardValue"]
+	    		} hiddenCard()
+
 	    		dealerCount = dealerCount +  history2["deckCardValue"]
 
 	    		gameInfoUpdate()
 	    		i++
 	    	}
-	    	else if(i > 2){
+	    	else if(i > 2){//goes twice for player cards
 	    		let history2 = new TempObj()
-	    		$("#playerCards").append(`<div id='card${i}' class='cardFormat'></div>`)
+	    		$("#playerCards").append(`<div id='card${i}' class='cardFormat ani'></div>`)
 	    		$(`#card${i}`).css("background-image",history2["suitDecal"])
 	    		playerCount = playerCount + history2["deckCardValue"]
     			gameInfoUpdate()
 	    	}
     	};
+
     }assignDecks();
+
+//end of function jquery
 });
 
 //things to add:
