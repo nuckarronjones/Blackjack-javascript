@@ -8,10 +8,11 @@ let player = {
 	"name": "Player1",
 	"balance": 100000,
 	"count": 0,
+	"handCards": [], //ADD TYO LATER!!!!!!!!!!!
 	"turn": true,
 	"bet":100,
 	// 0 - no value //1 = win // -1 = lost
-	"win": 0
+	"win": 0/*experimental*/
 }
 let dealer ={
 	"count":0,
@@ -19,10 +20,10 @@ let dealer ={
 	"hiddenCardValue": 0,
 	"hiddenCardSuit": null,
 	// 0 - no value //1 = win // -1 = lost
-	"win": 0
+	"win": 0/*experimental*/
 }
 const DECK = [
-	{"value":1,
+	{"value":11,
 		"card":"Ace",
 		"suits":[
 			'url("images/cards/AH.jpg")',
@@ -129,7 +130,8 @@ const DECK = [
 ]
 
 /*************************************************************************************************
-THINGS TO RESET AFTER EACH ROUND : PLAYERCOUNT(reset), PLAYER TURN(reset), CARDNUM? , PLAYER BALANCE(reset), ul FOR CARDS(clear), BUTON PROPS
+>THINGS TO RESET AFTER EACH ROUND : PLAYERCOUNT(reset), PLAYER TURN(reset), CARDNUM? ,
+	PLAYER BALANCE(reset), ul FOR CARDS(clear), BUTON PROPS
 **************************************************************************************************/
 
 $(document).ready(function(){
@@ -149,9 +151,10 @@ $(document).ready(function(){
     //temporary object stores random variables, when called, each time will produce new results
     function TempObj(){
     	this.randomValue = randomValue(),
-    	this.randomalue2 = randomValue(),
+    	//this.randomalue2 = randomValue(),
     	this.randomSuit = randomSuit(),
 
+    	this.suitName = DECK[this.randomValue]["card"]
     	this.deckCardValue = DECK[this.randomValue]["value"],
     	this.suitDecal = DECK[this.randomValue]["suits"][this.randomSuit]
     }
@@ -197,7 +200,6 @@ $(document).ready(function(){
 		gameInfoUpdate();
 		console.log(player["name"] + " lost!")
 		player["win"] = -1 /*experimental*/
-		console.log("player is lost" + player["win"])
 		assignDecks();},2000)
 		
 	}
@@ -206,7 +208,6 @@ $(document).ready(function(){
 		setTimeout(function(){player["balance"] = player["balance"] + player["bet"]
 		console.log(player["name"] + " wins!")
 		player["win"] = 1/*experimental*/
-		console.log("player is win" + player["win"])
 		assignDecks()},2000)
 	}
 
@@ -224,6 +225,7 @@ $(document).ready(function(){
     		$("#countP").html(playerCount)
 
 		if(playerCount > 21){
+			disabled()//stop player from continuously drawing cards. Players will try to break the game somehow...
 			lost()
 		}
 		//this means that user has doubled down, check to ensure that player has switched turns from dbl down button 
@@ -283,7 +285,9 @@ $(document).ready(function(){
 	    		return win()
 	    	}else if(dealerCount == playerCount){
 	    		console.log("Push!")
-	    		return assignDecks()
+	    		return setTimeout(function(){
+	    			assignDecks()
+	    		},2000)
 	    	}
 	    }
    		
@@ -321,7 +325,7 @@ $(document).ready(function(){
 	//assign starting cards to dealer and player by random numbers START OF GAME 
     function assignDecks(){
     	//after each round, changed variables/stylings will be reset
-    	console.log("NEW GAME")
+    	console.log("NEW GAME-----------------------")
     	cardNum = 0;
     	cardNum2 = 0;
     	playerCount = 0;
@@ -332,6 +336,8 @@ $(document).ready(function(){
     	player["bet"] = 100;
     	player["win"] = 0;
     	dealer["win"] = 0;
+    	player["countAlt"] = 0;
+    	player["handCards"] = [];
 
     	$(".ulPlayer").html("")
     	$(".ulDealer").html("")
@@ -364,6 +370,12 @@ $(document).ready(function(){
 	    		let history2 = new TempObj()
 	    		$("#playerCards").append(`<div id='card${i}' class='cardFormat ani'></div>`)
 	    		$(`#card${i}`).css("background-image",history2["suitDecal"])
+
+	    		//update player hand, if aces are included, 10 will be subtracted if player goes over 21
+	    		player["handCards"].push(history2["suitName"])
+	    		console.log(history2["suitName"])
+	    		console.log(player["handCards"])
+	    		
 	    		playerCount = playerCount + history2["deckCardValue"]
     			gameInfoUpdate()
 	    	}
