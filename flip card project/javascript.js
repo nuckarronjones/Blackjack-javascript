@@ -4,23 +4,20 @@
 ************************************************/
 //VARIABLES
 let player = {
-	"profilePicture": "url('images/player.png')",
-	"name": "Player1",
-	"balance": 100000,
-	"count": 0,
-	"handCards": [], //ADD TYO LATER!!!!!!!!!!!
-	"turn": true,
-	"bet":100,
-	// 0 - no value //1 = win // -1 = lost
-	"win": 0/*experimental*/
+	profilePicture :  "url('images/player.png')",
+	name :  "Player1",
+	balance :  100000,
+	count :  0,
+	turn :  true,
+	bet : 100,
+	aceCount : []/*experimental*/
 }
-let dealer ={
-	"count":0,
-	"turn": false,
-	"hiddenCardValue": 0,
-	"hiddenCardSuit": null,
-	// 0 - no value //1 = win // -1 = lost
-	"win": 0/*experimental*/
+let dealer = {
+	count : 0,
+	turn :  false,
+	hiddenCardValue :  0,
+	hiddenCardSuit :  null,
+	aceCount : []/*experimental*/
 }
 const DECK = [
 	{"value":11,
@@ -130,16 +127,26 @@ const DECK = [
 ]
 
 /*************************************************************************************************
->THINGS TO RESET AFTER EACH ROUND : PLAYERCOUNT(reset), PLAYER TURN(reset), CARDNUM? ,
+>THINGS TO RESET AFTER EACH ROUND : player.count(reset), PLAYER TURN(reset), CARDNUM? ,
 	PLAYER BALANCE(reset), ul FOR CARDS(clear), BUTON PROPS
 **************************************************************************************************/
 
 $(document).ready(function(){
 /////////////VARIABLES/ FUNCTION SETUPS
-    let playerCount = player["count"]
-    let dealerCount = dealer["count"]
     let cardNum = 0;
     let cardNum2 = 0;
+
+    //temporary object stores random variables, when called, each time will produce new results
+    function TempObj(){
+    	this.randomValue = randomValue();
+    	//this.randomalue2 = randomValue(),
+    	this.randomSuit = randomSuit();
+
+    	this.suitName = DECK[this.randomValue]["card"];
+    	this.deckCardValue = DECK[this.randomValue]["value"];
+    	this.suitDecal = DECK[this.randomValue]["suits"][this.randomSuit];
+    }
+
     //Random value generator function to be referenced in objects
     let randomValue = function(){
     	return Math.round(Math.random() * (DECK.length - 1))
@@ -148,27 +155,31 @@ $(document).ready(function(){
     let randomSuit = function(){
     	return Math.round(Math.random() * 3)
     }
-    //temporary object stores random variables, when called, each time will produce new results
-    function TempObj(){
-    	this.randomValue = randomValue(),
-    	//this.randomalue2 = randomValue(),
-    	this.randomSuit = randomSuit(),
-
-    	this.suitName = DECK[this.randomValue]["card"]
-    	this.deckCardValue = DECK[this.randomValue]["value"],
-    	this.suitDecal = DECK[this.randomValue]["suits"][this.randomSuit]
+	let hasAce = function(x, theObject){
+    	//x == dealer or player based on parameter input on function call
+    	let array = x.aceCount
+    	console.log("Ace function shot")
+    	//1st, check to see if x has an ace or not dealt to them
+    	if(theObject.suitName == "Ace"){
+    		x.aceCount.push("ace")
+    	}
+    	//2nd, if whoever goes over 21 with an ace in inventory, subract 10 (the difference, that makes Ace = 1)
+    		if(array.length > 0 && x.count > 21){
+    			console.log("yes")
+    			x.count = x.count - 10;
+    			x.aceCount.pop()
+    		}
+    	gameInfoUpdate()
     }
 
-    //load player/game information
-    $("#playerName").html(player["name"])
-
+    //refresh player/game information
     let gameInfoUpdate = function(){
+    	$("#playerName").html(player["name"])
     	$("#bet").html("Bet: $" + player["bet"])
-    	$("#countD").html(dealerCount)
+    	$("#countD").html(dealer.count)
     	$("#balance").html("$" + player["balance"])
-    	$("#countP").html(playerCount)
+    	$("#countP").html(player.count)
     }
-    gameInfoUpdate();
 
    	//Turn changes , disabled button features
 	let disabled = function(){
@@ -210,10 +221,25 @@ $(document).ready(function(){
 		player["win"] = 1/*experimental*/
 		assignDecks()},2000)
 	}
+    function winLoseCheck(){
+	    if(dealer.count > player.count && dealer.count <= 21){
+	    	return lost();
+	    }else if(player.count > dealer.count && player.count <= 21){
+	    	return win()
+	    }else if(dealer.count > 21){
+	    	return win()
+	    }else if(dealer.count == player.count){
+	    	console.log("Push!")
+	    	return setTimeout(function(){
+	    		assignDecks()
+	    	},2000)
+	    }
+	   }
 
     //upon each time, a new random assortment of numbers are created as a new object
     function draw(){
     	console.log("DRAW FUCTION")
+    	console.log(player.count)
     	let history = new TempObj()
 
     		let card = `<li id='playerCard${cardNum}' class='cardFormat playerCard ani'></li>`
@@ -221,16 +247,22 @@ $(document).ready(function(){
     		//prepend. since the list items are pushed left by .append(). 
     		$(".ulPlayer").prepend(card)
     		$(`#playerCard${cardNum}`).css("background-image",history["suitDecal"])
-    		playerCount = playerCount + history["deckCardValue"]
-    		$("#countP").html(playerCount)
+    		player.count = player.count + history["deckCardValue"]
+    		$("#countP").html(player.count)
 
-		if(playerCount > 21){
+    		hasAce(player,history)
+    		console.log("activated")
+    		console.log(player.aceCount)
+
+    		gameInfoUpdate()
+
+		if(player.count > 21){
 			disabled()//stop player from continuously drawing cards. Players will try to break the game somehow...
 			lost()
 		}
 		//this means that user has doubled down, check to ensure that player has switched turns from dbl down button 
 		if(player["turn"] == false){
-			if(playerCount <= 21){
+			if(player.count <= 21){
 				dealerDraw()
 			}
 		}
@@ -242,13 +274,21 @@ $(document).ready(function(){
 
 	function dealerDraw(){
     	console.log("DEALER DRAW")
+    	console.log(" -- " , dealer.aceCount)
 
-    	//reveal card!
-    	dealerCount = dealerCount + dealer["hiddenCardValue"]
-    	$(`#card2`).css("background-image",dealer["hiddenCardSuit"])
-    	gameInfoUpdate()
+    	//reveal dealer card!
+	    function hiddenCard(){//assigns hidden card for dealer
+	    	let history = new TempObj()
+	    	dealer["hiddenCardSuit"] = history["suitDecal"]
+	    	dealer["hiddenCardValue"] = history["deckCardValue"]
 
-    	if(dealerCount <= 16){
+	    	dealer.count = dealer.count + dealer["hiddenCardValue"]
+    		$(`#card2`).css("background-image",dealer["hiddenCardSuit"])
+
+	    	hasAce(dealer,history)
+	    } hiddenCard()
+
+    	if(dealer.count <= 16){
     		//time function to stop fast paced gameplay
 	    	let time = setInterval(function(){
 		    	let history = new TempObj()
@@ -258,12 +298,12 @@ $(document).ready(function(){
 
 		    			$(".ulDealer").append(card)
 		    			$(`#dealerCard${cardNum2}`).css("background-image",history["suitDecal"])
-		    			dealerCount = dealerCount + history["deckCardValue"]
+		    			dealer.count = dealer.count + history["deckCardValue"]
+		    			hasAce(dealer,history)
 		    			cardNum2 ++
-		    			console.log(dealerCount + " DEALER COUNT")
-		    			gameInfoUpdate()
+		    			console.log(dealer.count + " DEALER COUNT")
 		    		}
-		    	if(dealerCount >=16){
+		    	if(dealer.count >=16){
 		    		//no more dealer draws, clear timeout function and return win/lose check
 		    			clearInterval(time);
 		    			winLoseCheck()
@@ -275,26 +315,11 @@ $(document).ready(function(){
     		winLoseCheck()
     	}
 
-    	//resulting comparison from final dealer draw -> win/lose
-    	function winLoseCheck(){
-	    	if(dealerCount > playerCount && dealerCount <= 21){
-	    		return lost();
-	    	}else if(playerCount > dealerCount && playerCount <= 21){
-	    		return win()
-	    	}else if(dealerCount > 21){
-	    		return win()
-	    	}else if(dealerCount == playerCount){
-	    		console.log("Push!")
-	    		return setTimeout(function(){
-	    			assignDecks()
-	    		},2000)
-	    	}
-	    }
+    	gameInfoUpdate()
    		
 	};
 
-	//draw card function
-/////////////START
+/////////////start of actual functionality after function setup
 
 	//Adding button functionalities, if a button calls for a next turn, diabled will be called
     $("#hit").on("click",function(){
@@ -326,61 +351,56 @@ $(document).ready(function(){
     function assignDecks(){
     	//after each round, changed variables/stylings will be reset
     	console.log("NEW GAME-----------------------")
-    	cardNum = 0;
-    	cardNum2 = 0;
-    	playerCount = 0;
-    	dealerCount = 0;
+    	gameInfoUpdate();
 
-    	player["turn"] = true;
-    	dealer["turn"] = false;
-    	player["bet"] = 100;
-    	player["win"] = 0;
-    	dealer["win"] = 0;
-    	player["countAlt"] = 0;
-    	player["handCards"] = [];
+    	//restart player/dealer data
+    	player.count = 0;
+    	dealer.count = 0;
+    	player.bet = 100;
+    	player.turn = true;
+    	dealer.turn = false;
+    	player.aceCount = [];
+    	dealer.aceCount = [];
 
     	$(".ulPlayer").html("")
     	$(".ulDealer").html("")
     	$("#playerCards").html("")
     	$("#dealerCards").html("")
 
+    	console.log(player["count"])
+
     	//for buttons
     	enabled()
 
     	for(let i = 1;i<=4;i++){
-    		let history2 = new TempObj()
+    		let history = new TempObj()
+
 	    	if(i < 2){//only goes once, assigns visible dealer card, and hidden card
 	    		$("#dealerCards").append(`<div id='card1' class='cardFormat ani'></div>`)
-	    		$(`#card1`).css("background-image",history2["suitDecal"])
+	    		$(`#card1`).css("background-image",history["suitDecal"])
 	    		$("#dealerCards").append(`<div id='card2' class='cardFormat ani'></div>`)
 	    		$(`#card2`).css("background-image","url('images/cards/Red_back.jpg')")
 
-	    		function hiddenCard(){//assigns hidden card for dealer
-	    			let history2 = new TempObj()
-	    			dealer["hiddenCardSuit"] = history2["suitDecal"]
-	    			dealer["hiddenCardValue"] = history2["deckCardValue"]
-	    		} hiddenCard()
+	    		dealer.count = dealer.count +  history["deckCardValue"]
+	    		hasAce(dealer,history)
 
-	    		dealerCount = dealerCount +  history2["deckCardValue"]
-
-	    		gameInfoUpdate()
 	    		i++
 	    	}
 	    	else if(i > 2){//goes twice for player cards
-	    		let history2 = new TempObj()
+	    		let history = new TempObj()
+
 	    		$("#playerCards").append(`<div id='card${i}' class='cardFormat ani'></div>`)
-	    		$(`#card${i}`).css("background-image",history2["suitDecal"])
+	    		$(`#card${i}`).css("background-image",history["suitDecal"])
 
-	    		//update player hand, if aces are included, 10 will be subtracted if player goes over 21
-	    		player["handCards"].push(history2["suitName"])
-	    		console.log(history2["suitName"])
-	    		console.log(player["handCards"])
-	    		
-	    		playerCount = playerCount + history2["deckCardValue"]
-    			gameInfoUpdate()
+	    		player.count = player.count + history["deckCardValue"]
+	    		console.log("start draw")
+	    		hasAce(player, history)
+	    		console.log(player.aceCount)
 	    	}
-    	};
 
+
+    	};
+    	gameInfoUpdate()
     }assignDecks();
 
 //end of function jquery
