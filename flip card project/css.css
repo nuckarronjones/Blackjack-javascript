@@ -23,15 +23,19 @@
 /*HEADS UP DISPLAY*/
 #hud{
 	background-color:black;
-	font-size:40pt;
+	font-size:4vw;
+	width:100vw;
+	position: fixed;
 }
 	.contents{
 	}
 	#bet{
 		float:left;
+		margin-left:20px;
 	}
 	#balance{
 		float:right;
+		margin-right:20px;
 	}
 /*BEGIN CONTENT*/
 #wrapper{
@@ -97,7 +101,7 @@
 
 		}
 			.bottom{
-				font-size:20pt;
+				font-size:2vw;
 				position:absolute;
 				left:0;
 				right:0;
@@ -214,14 +218,14 @@
 	}
 	#buttonGrid{
 		float:right;
-		width:33%;
+		width:33vw;
 		height:100%;
 		margin:10px;
 
 		display:grid;
 		grid-template-columns: 2fr 2fr;
 		grid-template-rows: 2fr 2fr;
-		grid-gap:20px;
+		grid-gap:1vw;
 		grid-template-areas:
 		"Hit Double"
 		"Stay Surrender"
@@ -231,7 +235,7 @@
 			background:transparent;
 			background-color:black;
 			border:2px solid white;
-			font-size: 20pt;
+			font-size: 2vw;
 		}
 		.buttonStyle:hover{
 			background-color:white;
