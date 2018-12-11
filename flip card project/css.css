@@ -4,6 +4,9 @@
 ************************************************/
 
 /*INITIAL LAYOUT*/
+html, body{
+	position: fixed;
+}
 *{
 	padding:0;
 	margin:0;
@@ -23,8 +26,7 @@
 /*HEADS UP DISPLAY*/
 #hud{
 	background-color:black;
-	font-size:4vw;
-	width:100vw;
+	font-size:50px;
 	position: fixed;
 }
 	.contents{
@@ -101,7 +103,7 @@
 
 		}
 			.bottom{
-				font-size:2vw;
+				font-size:30px;
 				position:absolute;
 				left:0;
 				right:0;
