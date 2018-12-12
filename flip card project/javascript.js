@@ -217,19 +217,25 @@ $(document).ready(function(){
 	}
 	//lost round
 	let lost = function(){
+		$(".winLoose").css("display","block")
+		$("#results").html(`${player.name} Lost`)
 		setTimeout(function(){player["balance"] = player["balance"] - player["bet"]
-		gameInfoUpdate();
-		console.log(player["name"] + " lost!")
-		player["win"] = -1 /*experimental*/
+			gameInfoUpdate();
+			console.log(player["name"] + " lost!")
+			player["win"] = -1 /*experimental*/
+		$(".winLoose").css("display","none")
 		assignDecks();},2000)
-		
 	}
 	//win round
 	let win = function(){
+		$(".winLoose").css("display","block")
+		$("#results").html(`${player.name} Won`)
+
 		setTimeout(function(){player["balance"] = player["balance"] + player["bet"]
-		console.log(player["name"] + " wins!")
-		player["win"] = 1/*experimental*/
-		assignDecks()},2000)
+			console.log(player["name"] + " wins!")
+			player["win"] = 1/*experimental*/
+			$(".winLoose").css("display","none")
+			assignDecks()},2000)
 	}
     function winLoseCheck(){
 	    if(dealer.count > player.count && dealer.count <= 21){
@@ -239,8 +245,10 @@ $(document).ready(function(){
 	    }else if(dealer.count > 21){
 	    	return win()
 	    }else if(dealer.count == player.count){
-	    	console.log("Push!")
+	    	$(".winLoose").css("display","block")
+			$("#results").html(`Draw`)
 	    	return setTimeout(function(){
+	    		$(".winLoose").css("display","none")
 	    		assignDecks()
 	    	},2000)
 	    }
