@@ -132,15 +132,6 @@ const DECK = [
 **************************************************************************************************/
 
 $(document).ready(function(){
-	//fix the page size to fix movement issues when resizing browser
-	function fixedDocument(){
-		let toBeResized = ["body","html",".browser_func"]
-
-		toBeResized.map((val)=>{
-			$(val).css("width",`${$(window).width()}px`)
-		})
-	}
-	fixedDocument();
 
 /////////////VARIABLES/ FUNCTION SETUPS
     let cardNum = 0;

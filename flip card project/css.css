@@ -26,8 +26,6 @@
 
 /*INITIAL LAYOUT*/
 html, body{
-	width:1349px;
-	position: fixed;
 }
 *{
 	padding:0;
@@ -49,7 +47,7 @@ html, body{
 #hud{
 	background-color:black;
 	font-size:50px;
-	position: fixed;
+	width: 100%;
 }
 	.contents{
 	}
