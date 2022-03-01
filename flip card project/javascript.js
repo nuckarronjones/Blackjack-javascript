@@ -418,6 +418,6 @@ $(document).ready(function(){
 //things to add:
 	//achievements
 	//start menu, select user image
-	//select difficulty
-	//ability yo upload user image
+	//select difficulty?
+	//ability to upload user image
 	//localstorage for player info, start new game

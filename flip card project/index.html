@@ -12,7 +12,13 @@
 		<meta charset="utf-8">
 	</head>
 	<body>
-	<div class="background"></div>
+		<!--gamebackground styling not working from css. Had to perform css inline until fix-->
+	<div class="gamebackground" style="
+    	background-color: #b3b3b3;
+    	position: fixed;
+    	width: 100vw;
+    	height: 100vh;
+    	z-index: -1;"></div>
 		<div class="winLoose">
 		<p id="results">Win!</p>
 	</div>
