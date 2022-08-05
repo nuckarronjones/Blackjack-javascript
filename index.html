@@ -1,0 +1,84 @@
+<!--***********************************************
+*THIS APPLICATION WAS CREATED BY NICHOLAS JONES*
+*                      *                       *
+************************************************/-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Flip card</title>
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+		<link rel ="stylesheet" type="text/css" href="css.css" />
+		<link href="https://fonts.googleapis.com/css?family=Quicksand:300" rel="stylesheet"> 
+		<meta charset="utf-8">
+	</head>
+	<body>
+		<!--gamebackground styling not working from css. Had to perform css inline until fix-->
+	<div class="gamebackground" style="
+    	background-color: #b3b3b3;
+    	position: fixed;
+    	width: 100vw;
+    	height: 100vh;
+    	z-index: -1;"></div>
+		<div class="winLoose">
+		<p id="results">Win!</p>
+	</div>
+
+
+		<div class="screen">
+			<p>You Won!</p>
+		</div>
+	<!-- START -->
+	<div id="wrapper">
+		<!--HEADS UP DISPLAY -->
+		<div id="hud" class="browser_func">
+			<div class="contents">
+				<span id="bet"></span>
+				<span id="balance"></span>
+			</div>
+		</div>
+		<!--START OF CONTENT-->
+		<div class="body">
+			<div id="player"><div class="bottom"><p id="playerName"></p><p><em id="countP"></em></p></div></div>
+			<div id="dealer"><div class="bottom"><p>Dealer</p><p><em id="countD"></em></p></div></div>
+			<!-- PLACE TO DISPLAY DRAWN CARDS, APPEND TO UL AS CARDS ARE DRAWN -->
+			<div class="drawCards">
+				<ul class="ulPlayer">
+					<!-- keep for formatting
+					<li class="cardFormat playerCard"></li> ---------------->
+				</ul>
+			<ul class="ulDealer">
+				<!-- keep for formatting
+				<li class="cardFormat dealerCard"></li> ----------------->
+			</ul>
+			</div>
+			<!--CENTER WRAPPER FOR BODY, CARD SPACE STARTING CARDS-->
+			<div id="bodyWrapper">
+				<!--DEALER STARTING CARDS -->
+				<div id="dealerCards">
+					<!--KEEP FOR FORMATTING
+					<div id="card1"></div>
+					<div id="card2"></div> ----------------------->
+				</div>
+				<div id="playerCards">
+					<!-- KEEP FOR FORMATTING
+					<div id="card3"></div>------------------------>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="controls">
+			<!--BEGIN BUTTON WRAPPER GRID -->
+			<div id="buttonGrid">
+				<button id="hit" class="buttonStyle">Hit</button>
+				<button id="stay" class="buttonStyle switch">Stay</button>
+				<button id="doubleDown" class="buttonStyle switch">Double Down</button>
+				<button id="surrender" class="buttonStyle switch">Surrender</button>
+			</div>
+		</div>
+
+	</div>
+
+	</body>
+	<script type="text/javascript" src="javascript.js"></script>
+</html>
